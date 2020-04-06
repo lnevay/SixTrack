@@ -1,0 +1,82 @@
+! b1 horizontal
+stf75angle = 50*urad;
+stf75: crystal, material = "G4_Si",
+       		data = "../data/Si220pl",
+		shape = "box",
+		lengthY = 55*mm,
+		lengthX = 0.5*mm,
+		lengthZ = 4*mm,
+		sizeA = 5.43*ang,
+		sizeB = 5.43*ang,
+		sizeC = 5.43*ang,
+		alpha = 1,
+		beta  = 1,
+		gamma = 1,
+		spaceGroup = 227,
+		bendingAngleYAxis = stf75angle,
+		bendingAngleZAxis = 0;
+
+
+! b1 vertical
+qmp34angle = 50*urad;
+qmp34: crystal, material = "G4_Si",
+       		data = "../data/Si111pl",
+		shape = "box",
+		lengthY = 29*mm,
+		lengthX = 0.5*mm,
+		lengthZ = 4*mm,
+		sizeA = 5.43*ang,
+		sizeB = 5.43*ang,
+		sizeC = 5.43*ang,
+		alpha = 1,
+		beta  = 1,
+		gamma = 1,
+		spaceGroup = 227,
+		bendingAngleYAxis = qmp34angle,
+		bendingAngleZAxis = 0,
+		miscutAngleY=20*urad;
+
+
+! b2 horizontal
+tcp76angle = 50*urad;
+tcp76: crystal, material = "G4_Si",
+       		data = "../data/Si220pl",
+		shape = "box",
+		lengthY = 54*mm,
+		lengthX = 1.5*mm,
+		lengthZ = 4*mm,
+		sizeA = 5.43*ang,
+		sizeB = 5.43*ang,
+		sizeC = 5.43*ang,
+		alpha = 1,
+		beta  = 1,
+		gamma = 1,
+		spaceGroup = 227,
+		bendingAngleYAxis = tcp76angle,
+		bendingAngleZAxis = 0;
+
+
+! b2 vertical
+qmp53angle = 50*urad;
+qmp53: crystal, material = "G4_Si",
+       		data = "../data/Si111pl",
+		shape = "box",
+		lengthY = 29*mm,
+		lengthX = 1.5*mm,
+		lengthZ = 4*mm,
+		sizeA = 5.43*ang,
+		sizeB = 5.43*ang,
+		sizeC = 5.43*ang,
+		alpha = 1,
+		beta  = 1,
+		gamma = 1,
+		spaceGroup = 227,
+		bendingAngleYAxis = qmp53angle,
+		bendingAngleZAxis = 0;
+
+
+option, physicsList="completechannellingemd";
+
+option, minimumKineticEnergy=100*GeV;
+
+r1: region, defaultRangeCut=50*cm;
