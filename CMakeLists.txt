@@ -419,11 +419,11 @@ if(ROOT)
 endif(ROOT)
 
 if(G4COLLIMATION)
-  if(STATIC)
-    find_package(Geant4 REQUIRED static)
-  else()
-    find_package(Geant4 REQUIRED)
-  endif(STATIC)
+  #if(STATIC)
+  #  find_package(Geant4 REQUIRED static)
+  #else()
+  #  find_package(Geant4 REQUIRED)
+  #endif(STATIC)
 
   #no error checking yet
   message(STATUS "Geant4 include folders: ${Geant4_INCLUDE_DIRS}")
