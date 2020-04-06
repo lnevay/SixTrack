@@ -1,21 +1,3 @@
-/* 
-Beam Delivery Simulation (BDSIM) Copyright (C) Royal Holloway, 
-University of London 2001 - 2020.
-
-This file is part of BDSIM.
-
-BDSIM is free software: you can redistribute it and/or modify 
-it under the terms of the GNU General Public License as published 
-by the Free Software Foundation version 3 of the License.
-
-BDSIM is distributed in the hope that it will be useful, but 
-WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
-*/
 #include "BDSBunchSixTrackLink.hh"
 #include "BDSException.hh"
 #include "BDSIMLink.hh"
@@ -39,11 +21,6 @@ along with BDSIM.  If not, see <http://www.gnu.org/licenses/>.
 #include <vector>
 
 std::string CleanFortranString(char* str, size_t count);
-
-//std::vector<CollimationParticle> input_particles;
-//std::vector<CollimationParticle> output_particles;
-//std::vector<CollimationEnergyDeposition> EnergyDepositionConfiguration;
-//std::set<int> keep_ids;
 
 bool debugBDS = false;
 
@@ -143,9 +120,7 @@ void g4_add_particle(double*  xIn,
 		     double*  /*sy*/,
 		     double*  /*sz*/)
 {
-  //G4double mass        = (*massIn) * CLHEP::MeV;
   G4double totalEnergy = (*totalEnergyIn) * CLHEP::GeV;
-  //G4double momMag      = std::sqrt(totalEnergy*totalEnergy - mass*mass);
   G4double xp          = (*xpIn);
   G4double yp          = (*ypIn);
   G4double zp          = BDSBunch::CalculateZp(xp,yp,1);
@@ -191,51 +166,6 @@ void g4_add_particle(double*  xIn,
 
   if (particleDefinition)
     {stp->AddParticle(particleDefinition, coords);}
-  //WARNING: at this stage in SixTrack the units have been converted to GeV, m, and rad!
-  //The particle energy input is the TOTAL energy
-  //mass (i.e. nucm) is already in MeV!
-  /*
-  double x_in = (*x) * CLHEP::m;
-  double y_in = (*y) * CLHEP::m;
-  
-  //We want px and py, not the angle!
-  //p_in is the TOTAL momentum of the particle
-  
-  double e_in = (*e) * CLHEP::GeV;
-  double p_in = sqrt((e_in*e_in) - (*mass * *mass));
-  
-  // x' = p_x / p_in
-  // -> p_x = p_in * x'
-  //p_in will now be in MeV, xp, yp will be in rad -> units are good!
-  double px_in = p_in * (*xp);
-  double py_in = p_in * (*yp);
-  
-  // p_z^2 = p_in^2 - p_x^2 - p_y^2
-  double p_z = sqrt( (p_in*p_in) - (px_in*px_in) - (py_in*py_in) );
-  
-  CollimationParticle in_particle;
-  in_particle.x = x_in;
-  in_particle.y = y_in;
-  
-  in_particle.px = px_in;
-  in_particle.py = py_in;
-  in_particle.pz = p_z;
-  in_particle.p = p_in;
-  
-  in_particle.e = e_in;
-  in_particle.pdgid = *pdgid;
-  in_particle.z = *nzz;
-  in_particle.a = *naa;
-  in_particle.q = *nqq;
-  in_particle.m = *mass;
-  in_particle.id = input_particles.size();
-  
-  in_particle.sx = *sx;
-  in_particle.sy = *sy;
-  in_particle.sz = *sz;
-  
-  input_particles.push_back(in_particle);
-  */
 }
 
 extern "C"
@@ -280,9 +210,8 @@ void g4_collimate_return(int*     j,
     !++  PART_INDIV(MAX_NPART)   Divergence of impacting particles
   */
   
-  //Here the units have been converted back to GeV and m (in the tracking action)
+  // here the units have been converted back to GeV and m (in the tracking action)
   const BDSHitsCollectionSamplerLink* hits = bds->SamplerHits();
-  //G4int ind = *j - 1;
   G4int ind = *j;
   if (ind > (G4int)hits->entries())
     {return;}
@@ -290,12 +219,10 @@ void g4_collimate_return(int*     j,
     {G4cout << "Returning particle with j and index " << *j << " " << ind << G4endl;}
 
   BDSHitSamplerLink* hit = (*hits)[ind];
-  //G4int parentID = hit->parentID;
-  //G4cout << "parent ID " << parentID << G4endl;
   const BDSParticleCoordsFull& coords = hit->coords;
   *x  = coords.x / CLHEP::m;
   *y  = coords.y / CLHEP::m;
-  //Remember, sixtrack xp, yp are p_x / p_total
+  // remember, sixtrack xp, yp are p_x / p_total
   *xp = coords.xp;
   *yp = coords.yp;
   *e  = coords.totalEnergy / CLHEP::GeV;
@@ -304,21 +231,21 @@ void g4_collimate_return(int*     j,
   *a = (int16_t)hit->A;
   *q = (int16_t)hit->charge;
   
-  //nucm is in MeV on both sides
+  // nucm is in MeV on both sides
   *m  = hit->mass;
   
-  //Spin
+  // spin
   *sx = 0.0;
   *sy = 0.0;
   *sz = 1.0;
   
-  //time, must be converted for using with sigmv
+  // time, must be converted for using with sigmv
   *sigmv  = coords.T / CLHEP::s;
 }
 
 std::string CleanFortranString(char* str, size_t count)
 {
-  // Fortran string nightmares
+  // fortran string nightmares
   std::string whitespace(" \t\n\r");
   std::string sstring(str,count);
   
@@ -327,7 +254,7 @@ std::string CleanFortranString(char* str, size_t count)
     {sstring.erase(lpos+1);}
 
   std::transform(sstring.begin(), sstring.end(), sstring.begin(), ::toupper);
-  // Fortran string happy place
+  // fortran string happy place
   return sstring;
 }
 
