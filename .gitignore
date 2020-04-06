@@ -47,3 +47,4 @@ doc/*/*.synctex.gz
 
 # Python
 *.pyc
+*.idea
