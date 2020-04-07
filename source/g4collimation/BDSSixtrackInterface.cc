@@ -29,7 +29,7 @@ BDSBunchSixTrackLink* stp = nullptr;
 
 extern "C"
 void g4_collimation_init(double* referenceEk,
-			 int*    /*seed*/,
+			 int*    seed,
 			 double* relativeEnergyCut,
 			 double* absoluteEnergyCut,
 			 double* /*rcut*/,
@@ -43,7 +43,8 @@ void g4_collimation_init(double* referenceEk,
   stp = new BDSBunchSixTrackLink();
   bds = new BDSIMLink(stp);
 
-  std::vector<std::string> arguments = {"--file=lhccrystals.gmad","--file=lhccrystals.gmad", "--vis_debug", "--batch"};
+  std::vector<std::string> arguments = {"--file=lhccrystals.gmad","--file=lhccrystals.gmad", "--vis_debug", "--batch",
+                                        "--seed="+std::to_string(*seed)};
   //std::vector<std::string> arguments = {"--file=lhccrystals.gmad","--batch"};
   std::vector<char*> argv;
   for (const auto& arg : arguments)
