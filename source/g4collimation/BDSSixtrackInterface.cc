@@ -55,7 +55,7 @@ void g4_collimation_init(double* referenceEk,
   double minimumEK = std::min((*relativeEnergyCut) * (*referenceEk), (*absoluteEnergyCut)*1000);
   G4cout << "Minimum kinetic energy " << minimumEK << " MeV" << G4endl;
   try
-    {bds->Initialise(argv.size() - 1, argv.data(), true, minimumEK / 1000.0, true);} // minimumEk in GeV
+    {bds->Initialise(argv.size() - 1, argv.data(), true, minimumEK / 1000.0, false);} // minimumEk in GeV
   catch (const std::exception& e)
     {std::cout << e.what() << std::endl; exit(1);}
   catch (const BDSException& e)
@@ -263,10 +263,9 @@ extern "C"
 void g4_get_particle_count(int* g4_npart)
 {
   int count = bds->SamplerHits()->entries();
-  /*if (debugBDS)
-    {*/std::cout << "Returning " << count << std::endl;/*}*/
   *g4_npart = count;
-  std::cout << "Return " << bds->NPrimariesToReturn() << " primaries and " << bds->NSecondariesToReturn() << " secondaries" << std::endl;
+  if (debugBDS)
+    {std::cout << "Returning " << count << " -> " << bds->NPrimariesToReturn() << " primaries and " << bds->NSecondariesToReturn() << " secondaries" << std::endl;}
 }
 
 extern "C"
