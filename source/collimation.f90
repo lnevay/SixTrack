@@ -3070,10 +3070,27 @@ subroutine coll_doCollimator_Geant4(c_aperture,c_rotation,c_length)
   ! energy in MeV
   real(kind=fPrec)    :: ien0, ien1
   integer(kind=int16) :: nnuc0,nnuc1
+  real(kind=fPrec)    :: crystalAngle
+  logical(1)          :: isACrystal
 
   !! Add the geant4 geometry
   if(firstrun .and. iturn == 1) then
-    call g4_add_collimator(cdb_cName(icoll), cdb_cMaterial(icoll), c_length, c_aperture, c_rotation, torbx(ie), torby(ie))
+    crystalAngle = 0
+    isACrystal = cdb_isCrystal(icoll)
+    if (isACrystal) then
+      write(lout,"(a)") "CUHRISTAL"
+      if(modulo(cdb_cRotation(icoll),pi) < c1m9) then
+        crystalAngle = -(sqrt(emitX/tbetax(ie))*talphax(ie))*cdb_cNSig(icoll)
+      elseif (modulo(cdb_cRotation(icoll)-pi2,pi) < c1m9) then
+        crystalAngle = -(sqrt(emitY/tbetay(ie))*talphay(ie))*cdb_cNSig(icoll)
+      else
+        write(lerr,"(a)") "COLL> ERROR Crystal collimator has to be horizontal or vertical"
+        call prror
+      end if
+      !!call cry_startElement(icoll,ie,c_emitx0_dist,c_emity0_dist,cry_tilt,c_length)
+    end if
+    call g4_add_collimator(cdb_cName(icoll), cdb_cMaterial(icoll), c_length, c_aperture, c_rotation, torbx(ie), torby(ie), &
+                           isACrystal, crystalAngle)
   end if
 
 !! Here we do the real collimation
