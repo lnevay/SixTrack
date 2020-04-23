@@ -58,8 +58,6 @@ void g4_collimation_init(double* referenceEk,
     {bds->Initialise(argv.size() - 1, argv.data(), true, minimumEK / 1000.0, false);} // minimumEk in GeV
   catch (const std::exception& e)
     {std::cout << e.what() << std::endl; exit(1);}
-  catch (const BDSException& e)
-    {std::cout << e.what() << std::endl; exit(1);}
 }
 
 extern "C"
