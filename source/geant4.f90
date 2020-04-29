@@ -74,7 +74,8 @@ module geant4
   end subroutine g4_collimation_init
 
 !void g4_add_collimator_(char* name, char* material, double* length, double* aperture, double* rotation, double* offset)
-  subroutine g4_add_collimator(name, material, length, aperture, rotation, x_offset, y_offset, isACrystal, cyrstalAngle) &
+  subroutine g4_add_collimator(name, material, length, aperture, rotation, x_offset, y_offset, side, &
+          isACrystal, cyrstalAngle)
 & bind(C,name="g4_add_collimator")
     use, intrinsic :: iso_c_binding
     implicit none
@@ -85,6 +86,7 @@ module geant4
     real(kind=C_DOUBLE),          intent(in) :: rotation
     real(kind=C_DOUBLE),          intent(in) :: x_offset
     real(kind=C_DOUBLE),          intent(in) :: y_offset
+    integer(kind=C_INT),          intent(in) :: side
     logical(kind=C_BOOL),         intent(in) :: isACrystal
     real(kind=C_DOUBLE),          intent(in) :: cyrstalAngle
   end subroutine g4_add_collimator

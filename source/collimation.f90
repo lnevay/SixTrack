@@ -3090,7 +3090,7 @@ subroutine coll_doCollimator_Geant4(c_aperture,c_rotation,c_length)
       !!call cry_startElement(icoll,ie,c_emitx0_dist,c_emity0_dist,cry_tilt,c_length)
     end if
     call g4_add_collimator(cdb_cName(icoll), cdb_cMaterial(icoll), c_length, c_aperture, c_rotation, torbx(ie), torby(ie), &
-                           isACrystal, crystalAngle)
+                           cdb_cSides(icoll), isACrystal, crystalAngle)
   end if
 
 !! Here we do the real collimation

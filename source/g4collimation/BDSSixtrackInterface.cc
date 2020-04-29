@@ -68,22 +68,30 @@ void g4_add_collimator(char*   name,
 		       double* /*rotationIn*/,
 		       double* /*xOffsetIn*/,
 		       double* /*yOffsetIn*/,
+		       int*    side,
 		       bool*   isACrystalIn,
 		       double* crystalAngleIn)
 {
   //  keep 48 value in sync with mNameLen in common_modules.f90
   std::string collimatorName = CleanFortranString(name, 48);
   std::string materialName   = CleanFortranString(material, 4);
-  
-  G4double length   = *lengthIn   * CLHEP::m;
-  G4double aperture = *apertureIn * CLHEP::m;
-  G4double crystalAngle = *crystalAngleIn * CLHEP::milliradian;
-  bds->AddLinkCollimator(collimatorName,
+
+  bool buildLeft  = *side == 0 || *side == 1;
+  bool buildRight = *side == 0 || *side == 2;
+  double length   = *lengthIn   * CLHEP::m;
+  double aperture = *apertureIn * CLHEP::m;
+  double crystalAngle = *crystalAngleIn * CLHEP::milliradian;
+  bds->AddLinkCollimatorJaw(collimatorName,
 			 materialName,
 			 length,
-			 aperture,
+			 0.5*aperture,
+			 0.5*aperture,
 			 0, // rotation done in sixtrack on particles so actually not needed
 			 0, // x and y offsets are done on sixtrack side so actually not needed in the interface at all
+			 0,
+			 buildLeft,
+			 buildRight,
+			 isACrystalIn,
 			 crystalAngle);
 }
 
