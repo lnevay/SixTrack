@@ -80,3 +80,5 @@ option, physicsList="completechannellingemd";
 option, minimumKineticEnergy=100*GeV;
 
 r1: region, defaultRangeCut=50*cm;
+
+option, storeSamplerAll=1;
