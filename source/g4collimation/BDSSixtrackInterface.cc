@@ -92,7 +92,7 @@ void g4_add_collimator(char*   name,
 			 0,
 			 buildLeft,
 			 buildRight,
-			 isACrystalIn,
+			 *isACrystalIn,
 			 crystalAngle);
 }
 
