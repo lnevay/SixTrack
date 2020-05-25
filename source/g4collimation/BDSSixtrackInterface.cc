@@ -132,7 +132,14 @@ void g4_add_particle(double*  xIn,
   G4double totalEnergy = (*totalEnergyIn) * CLHEP::GeV;
   G4double xp          = (*xpIn);
   G4double yp          = (*ypIn);
-  G4double zp          = BDSBunch::CalculateZp(xp,yp,1);
+  G4double zp = 1;
+  try
+    {zp = BDSBunch::CalculateZp(xp,yp,1);}
+  catch (const BDSException& e)
+    {
+      G4cout << e.what() << "Particle not tracked" << G4endl;
+      return;
+    }
   BDSParticleCoordsFull coords = BDSParticleCoordsFull((*xIn) * CLHEP::m,
 						       (*yIn) * CLHEP::m,
 						       0,
@@ -149,8 +156,10 @@ void g4_add_particle(double*  xIn,
   G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   G4ParticleDefinition* particleDef = particleTable->FindParticle(pdgID);
   if (!particleDef)
-    {throw BDSException("BDSBunchUserFile> Particle \"" + std::to_string(pdgID) + "\" not found");}
-
+    {
+      G4cerr << "Particle \"" << std::to_string(pdgID) << "\" not found." << G4endl;
+      return;
+    }
   BDSIonDefinition* ionDef = nullptr;
   if (BDS::IsIon(particleDef))
     {
