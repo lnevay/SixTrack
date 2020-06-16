@@ -6,6 +6,9 @@
 #include "BDSParticleDefinition.hh"
 #include "BDSPhysicsUtilities.hh"
 
+#include "G4Electron.hh"
+#include "G4GenericIon.hh"
+#include "G4IonTable.hh"
 #include "G4ParticleDefinition.hh"
 #include "G4ParticleTable.hh"
 #include "G4Types.hh"
@@ -19,6 +22,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <G4GenericIon.hh>
 
 std::string CleanFortranString(char* str, size_t count);
 
@@ -152,36 +156,47 @@ void g4_add_particle(double*  xIn,
 						       1);
 
   long long int pdgID = (long long int)(*pdgIDIn);
-
-  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
-  G4ParticleDefinition* particleDef = particleTable->FindParticle(pdgID);
-  if (!particleDef)
-    {
-      G4cerr << "Particle \"" << std::to_string(pdgID) << "\" not found." << G4endl;
-      return;
-    }
-  BDSIonDefinition* ionDef = nullptr;
-  if (BDS::IsIon(particleDef))
-    {
-      G4int a = (G4int)(*naa);
-      G4int z = (G4int)(*nzz);
-      G4double q = (G4double)(*nqq) * CLHEP::eplus;
-      ionDef = new BDSIonDefinition(a,z,q);
-    }
-	      
+  
   // Wrap in our class that calculates momentum and kinetic energy.
   // Requires that one of E, Ek, P be non-zero (only one).
   BDSParticleDefinition* particleDefinition = nullptr;
+  G4ParticleTable* particleTable = G4ParticleTable::GetParticleTable();
   try
     {
-      particleDefinition = new BDSParticleDefinition(particleDef, totalEnergy, 0, 0, 1, ionDef);
+      // PDG for ions = 10LZZZAAAI
+      if (pdgID > 1000000000) // is an ion
+	{
+	  G4GenericIon::GenericIonDefinition(); // construct general ion particle
+	  G4int a = (G4int)(*naa);
+	  G4int z = (G4int)(*nzz);
+	  G4double q = (G4double)(*nqq) * CLHEP::eplus;
+    BDSIonDefinition* ionDef = new BDSIonDefinition(a,z,q);
+	  
+	  G4IonTable* ionTable = particleTable->GetIonTable();
+	  G4double mass   = ionTable->GetIonMass(ionDef->Z(), ionDef->A());
+	  mass += ionDef->NElectrons()*G4Electron::Definition()->GetPDGMass();
+	  G4double charge = ionDef->Charge(); // correct even if overridden
+	  particleDefinition = new BDSParticleDefinition("ion", mass, charge,
+							 totalEnergy, 0, 0, 1, ionDef, pdgID);
+	}
+      else
+	{
+	  G4ParticleDefinition* particleDef = nullptr;
+	  particleDef = particleTable->FindParticle(pdgID);
+	  if (!particleDef)
+	    {
+	      G4cerr << "Particle \"" << std::to_string(pdgID) << "\" not found." << G4endl;
+	      return;
+	    }
+	  particleDefinition = new BDSParticleDefinition(particleDef, totalEnergy, 0, 0, 1, nullptr);
+	}
     }
   catch (const BDSException& e)
     {// if we throw an exception the object is invalid for the delete on the next loop
       particleDefinition = nullptr; // reset back to nullptr for safe delete
       return;
     }
-
+  
   if (particleDefinition)
     {stp->AddParticle(particleDefinition, coords);}
 }
@@ -250,7 +265,7 @@ void g4_collimate_return(int*     j,
   *q = (int16_t)hit->charge;
   
   // nucm is in MeV on both sides
-  *m  = hit->mass;
+  *m = hit->mass;
   
   // spin
   *sx = 0.0;
