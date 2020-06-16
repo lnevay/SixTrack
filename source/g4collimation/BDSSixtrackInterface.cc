@@ -279,7 +279,10 @@ std::string CleanFortranString(char* str, size_t count)
 extern "C"
 void g4_get_particle_count(int* g4_npart)
 {
-  int count = bds->SamplerHits()->entries();
+  int count = 1;
+  auto hits = bds->SamplerHits();
+  if (hits)
+    {count = hits->entries();}
   *g4_npart = count;
   if (debugBDS)
     {std::cout << "Returning " << count << " -> " << bds->NPrimariesToReturn() << " primaries and " << bds->NSecondariesToReturn() << " secondaries" << std::endl;}
