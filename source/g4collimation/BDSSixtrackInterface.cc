@@ -57,7 +57,11 @@ void g4_collimation_init(double* referenceEk,
   argv.push_back(nullptr);
 
   // absolute energy cut is in GeV from sixtrack
-  double minimumEK = std::min((*relativeEnergyCut) * (*referenceEk), (*absoluteEnergyCut)*1000);
+  double relEKCut = *relativeEnergyCut;
+  if (relEKCut < 1e-6) // defaults to 0 which means 0eV cut which is bad
+    {relEKCut = 1.0;}
+  // referenceEk is in MeV, but absoluteEnergyCut is in GeV incoming here
+  double minimumEK = std::min(relEKCut * (*referenceEk), (*absoluteEnergyCut)*1000);
   G4cout << "Minimum kinetic energy " << minimumEK << " MeV" << G4endl;
   try
     {bds->Initialise(argv.size() - 1, argv.data(), true, minimumEK / 1000.0, false);} // minimumEk in GeV
