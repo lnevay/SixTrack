@@ -201,8 +201,7 @@ void g4_add_particle(double*  xIn,
       return;
     }
   
-  if (particleDefinition)
-    {stp->AddParticle(particleDefinition, coords);}
+  stp->AddParticle(particleDefinition, coords);
 }
 
 extern "C"
