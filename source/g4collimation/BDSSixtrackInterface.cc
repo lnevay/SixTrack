@@ -174,7 +174,7 @@ void g4_add_particle(double*  xIn,
 	  G4int a = (G4int)(*naa);
 	  G4int z = (G4int)(*nzz);
 	  G4double q = (G4double)(*nqq) * CLHEP::eplus;
-    BDSIonDefinition* ionDef = new BDSIonDefinition(a,z,q);
+	  BDSIonDefinition* ionDef = new BDSIonDefinition(a,z,q);
 	  
 	  G4IonTable* ionTable = particleTable->GetIonTable();
 	  G4double mass   = ionTable->GetIonMass(ionDef->Z(), ionDef->A());
