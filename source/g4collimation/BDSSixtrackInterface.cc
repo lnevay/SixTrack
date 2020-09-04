@@ -31,6 +31,8 @@ bool debugBDS = false;
 BDSIMLink* bds = nullptr;
 BDSBunchSixTrackLink* stp = nullptr;
 
+int32_t sixtrackMaximumParticleID;
+
 extern "C"
 void g4_collimation_init(double* referenceEk,
 			 int*    seed,
@@ -46,6 +48,7 @@ void g4_collimation_init(double* referenceEk,
 {
   stp = new BDSBunchSixTrackLink();
   bds = new BDSIMLink(stp);
+  sixtrackMaximumParticleID = 0;
 
   std::string seedStr = std::to_string(*seed);
   std::vector<std::string> arguments = {"--file=lhccrystals.gmad","--file=lhccrystals.gmad", "--vis_debug", "--batch",
@@ -133,6 +136,9 @@ void g4_add_particle(double*  xIn,
 		     int16_t* nqq,
 		     double*  /*massIn*/,
 		     double*  /*sigmv*/,
+		     int32_t* externalParticleID,
+		     int32_t* externalParentID,
+		     double*  weightIn,
 		     double*  /*sx*/,
 		     double*  /*sy*/,
 		     double*  /*sz*/)
@@ -157,7 +163,7 @@ void g4_add_particle(double*  xIn,
 						       0,
 						       0,
 						       totalEnergy,
-						       1);
+						       (*weightIn));
 
   long long int pdgID = (long long int)(*pdgIDIn);
   
@@ -201,7 +207,7 @@ void g4_add_particle(double*  xIn,
       return;
     }
   
-  stp->AddParticle(particleDefinition, coords);
+  stp->AddParticle(particleDefinition, coords, (int)(*externalParticleID), (int)(*externalParentID));
 }
 
 extern "C"
@@ -224,6 +230,9 @@ void g4_collimate_return(int*     j,
 			 int16_t* a,
 			 int16_t* q,
 			 double*  sigmv,
+			 int*     externalParticleID,
+			 int*     externalParentID,
+			 double*  weight,
 			 int*     /*part_hit*/,
 			 int*     /*part_abs*/,
 			 double*  /*part_impact*/,
@@ -269,6 +278,10 @@ void g4_collimate_return(int*     j,
   
   // nucm is in MeV on both sides
   *m = hit->mass;
+
+  *externalParticleID = hit->externalParticleID;
+  *externalParentID   = hit->externalParentID;
+  *weight             = hit->coords.weight;
   
   // spin
   *sx = 0.0;
@@ -304,6 +317,18 @@ void g4_get_particle_count(int* g4_npart)
   *g4_npart = count;
   if (debugBDS)
     {std::cout << "Returning " << count << " -> " << bds->NPrimariesToReturn() << " primaries and " << bds->NSecondariesToReturn() << " secondaries" << std::endl;}
+}
+
+extern "C" void g4_get_maximum_particle_id(int32_t* m_id)
+{
+  *m_id = (int32_t)bds->GetCurrentMaximumSixTrackParticleID();
+  //tracking->GetMaximumParticleID();
+}
+
+extern "C" void g4_set_maximum_particle_id(int32_t* m_id)
+{
+  bds->SetCurrentMaximumExternalParticleID(*m_id);
+  //tracking->SetMaximumParticleID(*m_id);
 }
 
 extern "C"

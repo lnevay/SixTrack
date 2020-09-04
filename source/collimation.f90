@@ -1777,7 +1777,7 @@ subroutine coll_doCollimator(stracki)
       end do
     end if
 #else
-    call coll_doCollimator_Geant4(c_aperture,c_rotation,c_length,onesided)
+    call coll_doCollimator_Geant4(c_aperture,c_rotation,c_length)
 #endif
 
   end if
