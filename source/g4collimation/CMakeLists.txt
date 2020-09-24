@@ -5,4 +5,5 @@ include_directories(${BDSIM_INCLUDE_DIR}/bdsim)
 set(G4COLLIMATION_SOURCES BDSSixtrackInterface.cc)
 add_library(g4collimation STATIC ${G4COLLIMATION_SOURCES})
 target_link_libraries(g4collimation PRIVATE gmadShared bdsim)
+target_link_libraries(g4collimation PUBLIC ${ROOT_LIBRARIES})
 
