@@ -22,7 +22,6 @@
 #include <set>
 #include <string>
 #include <vector>
-#include <G4GenericIon.hh>
 
 std::string CleanFortranString(char* str, size_t count);
 
