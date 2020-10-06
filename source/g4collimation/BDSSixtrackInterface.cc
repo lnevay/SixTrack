@@ -91,7 +91,7 @@ void g4_add_collimator(char*   name,
   bool buildRight = *side == 0 || *side == 2;
   double length   = *lengthIn   * CLHEP::m;
   double aperture = *apertureIn * CLHEP::m;
-  double crystalAngle = *crystalAngleIn * 1e-3;
+  double crystalAngle = *crystalAngleIn;
   std::cout << "Aperture " << aperture << std::endl;
   std::cout << "Crystal angle " << crystalAngle << std::endl;
   bds->AddLinkCollimatorJaw(collimatorName,

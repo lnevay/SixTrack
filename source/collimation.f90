@@ -3081,9 +3081,9 @@ subroutine coll_doCollimator_Geant4(c_aperture,c_rotation,c_length)
     if (isACrystal) then
       write(lout,"(a)") "CUHRISTAL"
       if(modulo(cdb_cRotation(icoll),pi) < c1m9) then
-        crystalAngle = -(sqrt(emitX/tbetax(ie))*talphax(ie))*cdb_cNSig(icoll) + cdb_cryTilt(icoll)*1e3
+        crystalAngle = -(sqrt(c_emitx0_dist/tbetax(ie))*talphax(ie))*cdb_cNSig(icoll) + cdb_cryTilt(icoll)
       elseif (modulo(cdb_cRotation(icoll)-pi2,pi) < c1m9) then
-        crystalAngle = -(sqrt(emitY/tbetay(ie))*talphay(ie))*cdb_cNSig(icoll) + cdb_cryTilt(icoll)*1e3
+        crystalAngle = -(sqrt(c_emity0_dist/tbetay(ie))*talphay(ie))*cdb_cNSig(icoll) + cdb_cryTilt(icoll)
       else
         write(lerr,"(a)") "COLL> ERROR Crystal collimator has to be horizontal or vertical"
         call prror
