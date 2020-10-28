@@ -94,6 +94,7 @@ void g4_add_collimator(char*   name,
   double crystalAngle = *crystalAngleIn;
   std::cout << "Aperture " << aperture << std::endl;
   std::cout << "Crystal angle " << crystalAngle << std::endl;
+  bool isACrystal = *isACrystalIn;
   bds->AddLinkCollimatorJaw(collimatorName,
 			 materialName,
 			 length,
@@ -104,7 +105,7 @@ void g4_add_collimator(char*   name,
 			 0,
 			 buildLeft,
 			 buildRight,
-			 *isACrystalIn,
+			 isACrystal,
 			 crystalAngle);
 }
 
