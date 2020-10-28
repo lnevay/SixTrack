@@ -112,7 +112,7 @@ void g4_add_collimator(char*   name,
 extern "C"
 void g4_terminate()
 {
-  //delete bds;
+  delete bds;
   bds = nullptr;
 }
 
